@@ -1,0 +1,35 @@
+pipeline {
+  agent any
+  options {
+    skipDefaultCheckout true
+  }
+  stages {
+    stage('Get Code') {
+      steps {
+        git branch: 'master', url: 'https://github.com/jav956/todo-list-aws.git'
+      }
+    }
+    stage('Deploy') {
+      steps {
+        sh '''
+          sam build
+          sam deploy --config-env production
+        '''
+      }
+    }
+    stage('Rest Test') {
+      steps {
+        sh '''
+          export BASE_URL=$(sam list stack-outputs --config-env production --output json | jq -r '.[] | select(.OutputKey=="BaseUrlApi") | .OutputValue')
+          pytest-3 --junitxml=result-service.xml test/integration/todoApiTest_production.py
+        '''
+        junit 'result-service.xml'
+      }
+    }
+  }
+  post { 
+    always { 
+      deleteDir()
+    }
+  }
+}

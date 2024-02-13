@@ -2,9 +2,9 @@ version = 0.1
 [staging]
 [staging.global.parameters]
 region = "us-east-1"
+stack_name = "todo-list-aws-staging"
 [staging.deploy]
 [staging.deploy.parameters]
-stack_name = "todo-list-aws-staging"
 resolve_s3 = true
 s3_prefix = "todo-list-aws"
 capabilities = "CAPABILITY_IAM"
@@ -17,9 +17,9 @@ fail_on_empty_changeset = false
 [production]
 [production.global.parameters]
 region = "us-east-1"
+stack_name = "todo-list-aws-production"
 [production.deploy]
 [production.deploy.parameters]
-stack_name = "todo-list-aws-production"
 resolve_s3 = true
 s3_prefix = "todo-list-aws"
 capabilities = "CAPABILITY_IAM"
