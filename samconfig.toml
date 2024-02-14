@@ -1,0 +1,30 @@
+version = 0.1
+[staging]
+[staging.global.parameters]
+region = "us-east-1"
+stack_name = "todo-list-aws-staging"
+[staging.deploy]
+[staging.deploy.parameters]
+resolve_s3 = true
+s3_prefix = "todo-list-aws"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Stage=\"staging\""
+image_repositories = []
+disable_rollback = true
+confirm_changeset = false
+fail_on_empty_changeset = false
+
+[production]
+[production.global.parameters]
+region = "us-east-1"
+stack_name = "todo-list-aws-production"
+[production.deploy]
+[production.deploy.parameters]
+resolve_s3 = true
+s3_prefix = "todo-list-aws"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Stage=\"production\""
+image_repositories = []
+disable_rollback = true
+confirm_changeset = false
+fail_on_empty_changeset = false
