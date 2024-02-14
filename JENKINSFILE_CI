@@ -1,3 +1,4 @@
+def code_repo = 'https://github.com/jav956/todo-list-aws.git'
 pipeline {
   agent any
   options {
@@ -6,7 +7,10 @@ pipeline {
   stages {
     stage('Get Code') {
       steps {
-        git branch: 'develop', url: 'https://github.com/jav956/todo-list-aws.git'
+        git branch: 'develop', url: code_repo
+        sh '''
+          wget https://raw.githubusercontent.com/jav956/todo-list-aws-config/staging/samconfig.toml
+        '''
       }
     }
     stage('Static Test') {
@@ -38,12 +42,14 @@ pipeline {
     }
     stage('Promote') {
       steps {
-        withCredentials([gitUsernamePassword(credentialsId: 'github_jav956', gitToolName: 'git-tool')]) {
-          sh '''
+          deleteDir()
+          withCredentials([gitUsernamePassword(credentialsId: 'github_jav956', gitToolName: 'git-tool')]) {
+          sh """
+            git clone -b develop $code_repo .
             git checkout master
             git merge develop
             git push
-          '''
+          """
         }
       }
     }
