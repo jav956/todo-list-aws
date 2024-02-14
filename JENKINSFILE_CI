@@ -7,6 +7,9 @@ pipeline {
     stage('Get Code') {
       steps {
         git branch: 'develop', url: 'https://github.com/jav956/todo-list-aws.git'
+        sh '''
+          wget https://raw.githubusercontent.com/jav956/todo-list-aws-config/staging/samconfig.toml
+        '''
       }
     }
     stage('Static Test') {
