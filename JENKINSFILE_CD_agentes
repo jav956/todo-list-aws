@@ -1,0 +1,48 @@
+def code_repo = 'https://github.com/jav956/todo-list-aws.git'
+pipeline {
+  agent none
+  options {
+    skipDefaultCheckout true
+  }
+  stages {
+    stage('Deploy') {
+      agent any
+      steps {
+        sh '''
+          whoami
+          hostname
+        '''
+        git branch: 'master', url: code_repo
+        sh '''
+          sam build
+          sam deploy --config-env production
+        '''
+      }
+      post { 
+        always { 
+          deleteDir()
+        }
+      }
+    }
+    stage('Rest Test') {
+      agent { label 'api-rest' }
+      steps {
+        sh '''
+          whoami
+          hostname
+        '''
+        git branch: 'master', url: code_repo
+        sh '''
+          export BASE_URL=$(sam list stack-outputs --config-env production --output json | jq -r '.[] | select(.OutputKey=="BaseUrlApi") | .OutputValue')
+          pytest-3 --junitxml=result-service.xml test/integration/todoApiTest_production.py
+        '''
+        junit 'result-service.xml'
+      }
+      post { 
+        always { 
+          deleteDir()
+        }
+      }
+    }
+  }
+}
